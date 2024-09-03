@@ -1,0 +1,14 @@
+- hosts: all
+  
+- name: Setup sudo.
+  import_playbook: playbooks/sudo.yml
+
+- name: Setup hostnames.
+  import_playbook: playbooks/hostnames.yml
+
+- name: Setup locale.
+  import_playbook: playbooks/locale.yml
+
+- name: Setup timezone.
+  import_playbook: playbooks/timezone.yml
+

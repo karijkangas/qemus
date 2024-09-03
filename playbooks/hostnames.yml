@@ -1,0 +1,16 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+  - name: Set hostname.
+    hostname:
+     name: "{{ inventory_hostname }}"
+  - name: Add IP address of all hosts to all hosts.
+    blockinfile:
+      backup: yes
+      path: /etc/hosts
+      block: |
+        {% for host in groups['all'] %} 
+        {{ hostvars[host]['ansible_facts']['default_ipv4']['address'] }} {{ hostvars[host]['ansible_facts']['fqdn'] }} {{ hostvars[host]['ansible_facts']['hostname'] }} 
+        {% endfor %}

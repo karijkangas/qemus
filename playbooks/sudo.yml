@@ -1,0 +1,25 @@
+---
+- hosts: all
+  become: yes
+  become_method: su
+  become_user: root
+
+  tasks:
+  - name: Update apt cache.
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+  - name: Install sudo.
+    apt:
+      name: sudo
+      state: present
+  - name: Add "{{ ansible_user }}" to sudo group.
+    user:
+      name: "{{ ansible_user }}"
+      groups: sudo
+      append: yes
+  - name: Make sudo without password for "{{ ansible_user }}".
+    copy:
+      dest: /etc/sudoers.d/80-ansible-sudo-user
+      content: "{{ ansible_user }} ALL=(ALL) NOPASSWD:ALL"
+      mode: 0440

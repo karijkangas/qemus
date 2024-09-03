@@ -1,37 +1,36 @@
 #!/bin/bash
 
-INDEX="${1:-1}"
+INDEX="${1:-01}"
 MEMORY_SIZE="${2:-4G}"
-BASE_DISK_NAME="${3:-debian12.qcow2}"
+BASE_DISK_NAME="${3:-debian12-base.qcow2}"
+BASE_OVMF_VARS_NAME="${4:-ovmf_vars.fd}"
 
-DISK="${INDEX}-${BASE_DISK_NAME}"
 CORE_COUNT=4
-OVMF_VARS=ovmf_vars.fd
+DISK="${INDEX}-${BASE_DISK_NAME}"
+OVMF_VARS="${INDEX}-${BASE_OVMF_VARS_NAME}"
 
 if [ -z "$QEMUS_HOME" ]; then
     echo "\$QEMUS_HOME not set."
     exit 1
 fi
 
-IMAGES_DIR="$QEMUS_HOME"/images
 DISKS_DIR="$QEMUS_HOME"/disks
 SHARED_FOLDER="$QEMUS_HOME"/vm-share
 
 EFI_FIRM="$(dirname "$(which qemu-img)")/../share/qemu/edk2-aarch64-code.fd"
 
 DISK_FILE="$DISKS_DIR"/"$DISK"
-OVMF_VARS_FILE="$IMAGES_DIR"/"$OVMF_VARS"
-
-cp "$DISKS_DIR"/"$BASE_DISK_NAME" "$DISK_FILE"
+OVMF_VARS_FILE="$DISKS_DIR"/"$OVMF_VARS"
 
 PREFIX="$(brew --prefix)"
 CLIENT=${PREFIX}/opt/socket_vmnet/bin/socket_vmnet_client
 SOCKET=${PREFIX}/var/run/socket_vmnet
 
 "${CLIENT}" "${SOCKET}" qemu-system-aarch64 \
-  -device virtio-net-pci,netdev=net0 -netdev socket,id=net0,fd=3 \
   -machine virt,accel=hvf,highmem=on \
   -cpu cortex-a72 -smp "$CORE_COUNT" -m "$MEMORY_SIZE" \
+  -device virtio-net-pci,netdev=net0,mac=ca:fe:ba:be:00:"$INDEX" \
+  -netdev socket,id=net0,fd=3 \
   -device qemu-xhci,id=usb-bus \
   -device usb-tablet,bus=usb-bus.0 \
   -device usb-mouse,bus=usb-bus.0 \

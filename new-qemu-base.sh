@@ -3,14 +3,14 @@
 # This script creates a fresh virtual machine disk file and
 # an empty file for persisting UEFI variables.
 #
-# NOTES:
+# DEBIAN 12 NOTES:
 #   type "exit" from UEFI Interactive Shell
 #   select Boot Manager | UEFI QEMU USB HARDDRIVE ...
 #   select Install
 
 DISK="${1:-debian12}".qcow2
 DISK_SIZE="${2:-40G}"
-ISO_IMAGE_SRC="${3:-https://cdimage.debian.org/debian-cd/current/arm64/iso-cd/debian-12.6.0-arm64-netinst.iso}"
+ISO_IMAGE_SRC="${3:-https://cdimage.debian.org/debian-cd/current/arm64/iso-cd/debian-12.7.0-arm64-netinst.iso}"
 
 CORE_COUNT=4
 MEMORY_SIZE=4G
@@ -46,7 +46,7 @@ if [ -f "$ISO_IMAGE_FILE" ]; then
     done
 fi
 
-wget -nc -P "$IMAGES_DIR" "$ISO_IMAGE_SRC" || { echo "invalid iso image: $ISO_IMAGE_SRC"; exit 1; }
+wget -nc -P "$IMAGES_DIR" "$ISO_IMAGE_SRC" || { echo "invalid ISO image: $ISO_IMAGE_SRC"; exit 1; }
 
 if [ -f "$DISK_FILE" ] || [ -f "$OVMF_VARS_FILE" ]; then
 	while true; do

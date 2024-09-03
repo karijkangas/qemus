@@ -1,0 +1,10 @@
+
+---
+- hosts: all
+  become: yes
+
+  tasks:
+  - name: Set timezone to Asia/Tokyo
+    community.general.timezone:
+      name: UTC
+
