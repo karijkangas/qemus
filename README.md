@@ -5,11 +5,6 @@ https://sigmaris.info/blog/2019/04/automating-debian-install-qemu/
 https://adonis0147.github.io/post/qemu-socket-vmnet/
 https://gitlab.com/qemu-project/qemu/-/issues/465
 
-```
-# set QEMUS_HOME
-source env.sh
-```
-
 
 ```
 # set vms to dns for ip address
@@ -61,13 +56,23 @@ brew install socket_vmnet
 
 
 ```
-# create base qemu image
-./new-qemu-base.sh
-./new-qemu-base.sh debian12-base 20G https://cdimage.debian.org/debian-cd/current/arm64/iso-cd/debian-12.7.0-arm64-netinst.iso
+# create base image
+./new-base.sh
+./new-base.sh 20G debian12-base https://cdimage.debian.org/debian-cd/current/arm64/iso-cd/debian-12.7.0-arm64-netinst.iso
 
 #type "exit" from UEFI Interactive Shell
 #select Boot Manager | UEFI QEMU USB HARDDRIVE ...
 #select Install
+```
+
+
+```
+# macos: fixes qemu 9p directory sharing
+groupmod -g 120 dialout    # move out
+usermod -u 501 kari        # macos user id
+groupmod -g 20 kari        # macos staff id
+chown -hR kari:kari /home/kari
+shutdown -h now
 ```
 
 

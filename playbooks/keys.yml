@@ -1,0 +1,27 @@
+---
+- hosts: all
+  tasks:
+
+    - name: Generate ssh keypair.
+      openssh_keypair:
+        path: ~/.ssh/id_rsa
+
+    - name: Fetch public ssh keys.
+      shell: cat ~/.ssh/id_rsa.pub
+      register: ssh_keys
+
+    - name: Deploy keys on all vms.
+      authorized_key: "user={{ ansible_user }} key={{ item[0] }}"
+      delegate_to: "{{ item[1] }}"
+      with_nested:
+        - "{{ ssh_keys.stdout }}"
+        - "{{groups['all']}}"
+
+    - name: Add vms to ssh configuration.
+      community.general.ssh_config:
+        user: "{{ ansible_user }}"
+        host: "vm01 vm02 vm03 vm04 vm05 vm06"
+        strict_host_key_checking: no
+        user_known_hosts_file: /dev/null
+        state: present
+

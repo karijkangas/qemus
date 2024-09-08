@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+
+    - name: Create mount point.
+      file:
+        path: "{{ config_mount_point }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "u=rwx,g=rx,o=rx"
+
+    - name: Mount shared disk.
+      mount:
+        path: "{{ config_mount_point }}"
+        src: "{{ config_mount_tag }}"
+        fstype: 9p
+        opts: "trans=virtio,version=9p2000.L,rw,exec,mode=1777,gid=20,uid=501,msize=104857600"
+        state: mounted
+

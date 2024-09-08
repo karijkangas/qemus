@@ -6,6 +6,7 @@
   - name: Set hostname.
     hostname:
      name: "{{ inventory_hostname }}"
+
   - name: Add IP address of all hosts to all hosts.
     blockinfile:
       backup: yes

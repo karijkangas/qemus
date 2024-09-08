@@ -12,3 +12,15 @@
 - name: Setup timezone.
   import_playbook: playbooks/timezone.yml
 
+- name: Install packages.
+  import_playbook: playbooks/packages.yml
+
+- name: Install configuration files.
+  import_playbook: playbooks/configuration.yml
+
+- name: Mount shared folder.
+  import_playbook: playbooks/mount.yml
+
+- name: Setup ssh keys.
+  import_playbook: playbooks/keys.yml
+

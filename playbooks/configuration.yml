@@ -1,0 +1,16 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Copy configuration files
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+      loop:
+        - { src: "/Users/kari/.tmux.conf", dest: "/home/{{ansible_user}}/.tmux.conf"}
+        - { src: "/Users/kari/.config/nvim", dest: "/home/{{ansible_user}}/.config/nvim"}
+

@@ -1,4 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+source "$( dirname -- "${BASH_SOURCE[0]}" )/env.sh"
+
+if [ -z "$QEMUS_HOME" ]; then
+    echo "\$QEMUS_HOME not set."
+    exit 1
+fi
 
 INDEX="${1:-01}"
 MEMORY_SIZE="${2:-4G}"
@@ -9,18 +16,11 @@ CORE_COUNT=4
 DISK="${INDEX}-${BASE_DISK_NAME}"
 OVMF_VARS="${INDEX}-${BASE_OVMF_VARS_NAME}"
 
-if [ -z "$QEMUS_HOME" ]; then
-    echo "\$QEMUS_HOME not set."
-    exit 1
-fi
-
 DISKS_DIR="$QEMUS_HOME"/disks
-SHARED_FOLDER="$QEMUS_HOME"/vm-share
-
-EFI_FIRM="$(dirname "$(which qemu-img)")/../share/qemu/edk2-aarch64-code.fd"
 
 DISK_FILE="$DISKS_DIR"/"$DISK"
 OVMF_VARS_FILE="$DISKS_DIR"/"$OVMF_VARS"
+EFI_FIRM="$(dirname "$(which qemu-img)")/../share/qemu/edk2-aarch64-code.fd"
 
 PREFIX="$(brew --prefix)"
 CLIENT=${PREFIX}/opt/socket_vmnet/bin/socket_vmnet_client
@@ -42,6 +42,6 @@ SOCKET=${PREFIX}/var/run/socket_vmnet
   -drive format=raw,file="$OVMF_VARS_FILE",if=pflash \
   -device nvme,drive=drive0,serial=drive0,bootindex=0 \
   -drive if=none,media=disk,id=drive0,format=qcow2,file="$DISK_FILE" \
-  -virtfs local,path="$SHARED_FOLDER",security_model=mapped,mount_tag=vm-share \
-  -nographic \
+  -virtfs local,path="$CONFIG_SHARED_FOLDER",security_model=mapped,mount_tag="$CONFIG_MOUNT_TAG" \
+  -nographic 
 

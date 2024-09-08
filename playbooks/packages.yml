@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Install APT packages.
+      apt:
+        name: "{{ packages }}"
+        state: latest
+      vars:
+        packages: "{{ lookup('file', '../packages.txt').splitlines() }}"
+

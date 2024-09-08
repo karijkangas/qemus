@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script creates a fresh virtual machine disk file and
 # an empty file for persisting UEFI variables.
@@ -8,8 +8,15 @@
 #   select Boot Manager | UEFI QEMU USB HARDDRIVE ...
 #   select Install
 
-DISK="${1:-debian12}".qcow2
-DISK_SIZE="${2:-40G}"
+source "$( dirname -- "${BASH_SOURCE[0]}" )/env.sh"
+
+if [ -z "$QEMUS_HOME" ]; then
+    echo "\$QEMUS_HOME not set."
+    exit 1
+fi
+
+DISK_SIZE="${1:-20G}"
+DISK="${2:-debian12-base}".qcow2
 ISO_IMAGE_SRC="${3:-https://cdimage.debian.org/debian-cd/current/arm64/iso-cd/debian-12.7.0-arm64-netinst.iso}"
 
 CORE_COUNT=4
@@ -19,18 +26,13 @@ ISO_IMAGE=$(basename "$ISO_IMAGE_SRC")
 EFI_FIRM="$(dirname "$(which qemu-img)")/../share/qemu/edk2-aarch64-code.fd"
 OVMF_VARS=ovmf_vars.fd
 
-if [ -z "$QEMUS_HOME" ]; then
-    echo "\$QEMUS_HOME not set."
-    exit 1
-fi
-
 IMAGES_DIR="$QEMUS_HOME"/images
 DISKS_DIR="$QEMUS_HOME"/disks
 SHARED_FOLDER="$QEMUS_HOME"/vm-share
 
 ISO_IMAGE_FILE="$IMAGES_DIR/$ISO_IMAGE"
 DISK_FILE="$DISKS_DIR"/"$DISK"
-OVMF_VARS_FILE="$IMAGES_DIR"/"$OVMF_VARS"
+OVMF_VARS_FILE="$DISKS_DIR"/"$OVMF_VARS"
 
 mkdir -p "$IMAGES_DIR" "$DISKS_DIR" "$SHARED_FOLDER"
 
