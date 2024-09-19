@@ -1,16 +1,28 @@
 ---
 - hosts: all
-  become: yes
 
   tasks:
+
+    - name: Ensure ./vim directory exists
+      ansible.builtin.file:
+        path: "/home/{{ansible_user}}/.vim"
+        state: directory
+
     - name: Copy configuration files
-      copy:
+      ansible.builtin.copy:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
       loop:
+        - { src: "/Users/kari/.vimrc", dest: "/home/{{ansible_user}}/.vimrc"}
+        - { src: "/Users/kari/.vim/coc-settings.json", dest: "/home/{{ansible_user}}/.vim/coc-settings.json"}
+        - { src: "/Users/kari/.vim/coc.vim", dest: "/home/{{ansible_user}}/.vim/coc.vim"}
+        - { src: "/Users/kari/.vim/theme.vim", dest: "/home/{{ansible_user}}/.vim/theme.vim"}
         - { src: "/Users/kari/.tmux.conf", dest: "/home/{{ansible_user}}/.tmux.conf"}
-        - { src: "/Users/kari/.config/nvim", dest: "/home/{{ansible_user}}/.config/nvim"}
+
+    - name: Install vim plugins
+      ansible.builtin.shell:
+        cmd: vim -es -u vimrc -i NONE -c PlugInstall -c qa
 

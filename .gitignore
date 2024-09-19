@@ -1,5 +1,6 @@
 disks
 images
+backup_*
 vm-share
 venv
 secrets

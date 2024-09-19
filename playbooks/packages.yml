@@ -3,8 +3,9 @@
   become: yes
 
   tasks:
-    - name: Install APT packages.
-      apt:
+
+    - name: Install APT packages
+      ansible.builtin.apt:
         name: "{{ packages }}"
         state: latest
       vars:
